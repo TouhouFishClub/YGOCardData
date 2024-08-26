@@ -1,6 +1,7 @@
 --冥骸融合－メメント・フュージョン
 local s,id,o=GetID()
 function s.initial_effect(c)
+	--
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_FUSION_SUMMON+CATEGORY_TODECK)
@@ -11,6 +12,7 @@ function s.initial_effect(c)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
+	--
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_DESTROY+CATEGORY_SEARCH+CATEGORY_TOHAND)
@@ -31,6 +33,7 @@ function s.initial_effect(c)
 		Duel.RegisterEffect(ge1,0)
 	end
 end
+s.fusion_effect=true
 function s.spcfilter(c)
 	return c:IsReason(REASON_EFFECT) and (c:IsType(TYPE_MONSTER) or c:IsPreviousLocation(LOCATION_MZONE))
 		and not c:IsPreviousLocation(LOCATION_SZONE)

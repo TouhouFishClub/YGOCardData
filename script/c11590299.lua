@@ -1,6 +1,7 @@
 --ドラ・ドラ
 local s,id,o=GetID()
 function s.initial_effect(c)
+	--
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_SEARCH+CATEGORY_TOHAND)
@@ -11,6 +12,7 @@ function s.initial_effect(c)
 	e1:SetTarget(s.thtg)
 	e1:SetOperation(s.thop)
 	c:RegisterEffect(e1)
+	--
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_ATKCHANGE+CATEGORY_DECKDES)
@@ -50,7 +52,7 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=g:GetFirst()
 	if tc:IsRace(RACE_DRAGON) and tc:IsAttribute(ATTRIBUTE_FIRE) then
 		Duel.DisableShuffleCheck()
-		if Duel.SendtoGrave(tc,REASON_EFFECT+REASON_REVEAL)==0 and not tc:IsLocation(LOCATION_GRAVE) then return end
+		if Duel.SendtoGrave(tc,REASON_EFFECT+REASON_REVEAL)==0 or not tc:IsLocation(LOCATION_GRAVE) then return end
 		local atk=Duel.GetMatchingGroupCount(s.cfilter,c:GetControler(),LOCATION_ONFIELD,0,nil)*1000
 		if c:IsRelateToEffect(e) and c:IsFaceup() and atk>0 then
 			local e2=Effect.CreateEffect(c)

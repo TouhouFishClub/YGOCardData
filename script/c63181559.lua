@@ -1,6 +1,7 @@
 --トリックスター・ディフュージョン
 local s,id,o=GetID()
 function s.initial_effect(c)
+	--
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
@@ -9,6 +10,7 @@ function s.initial_effect(c)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
+	--
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetType(EFFECT_TYPE_QUICK_O)
@@ -21,6 +23,7 @@ function s.initial_effect(c)
 	e2:SetOperation(s.csbop)
 	c:RegisterEffect(e2)
 end
+s.fusion_effect=true
 function s.filter1(c,tp)
 	return c:IsType(TYPE_MONSTER) and c:IsCanBeFusionMaterial() and c:IsAbleToRemove()
 end

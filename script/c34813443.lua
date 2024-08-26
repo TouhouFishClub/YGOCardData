@@ -2,10 +2,12 @@
 local s,id,o=GetID()
 function s.initial_effect(c)
 	aux.AddCodeList(c,78783557)
+	--
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	c:RegisterEffect(e1)
+	--
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_FUSION_SUMMON)
@@ -18,6 +20,7 @@ function s.initial_effect(c)
 	e2:SetTarget(s.fstg)
 	e2:SetOperation(s.fsop)
 	c:RegisterEffect(e2)
+	--
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,2))
 	e3:SetType(EFFECT_TYPE_QUICK_O)
@@ -29,6 +32,7 @@ function s.initial_effect(c)
 	e3:SetOperation(s.attop)
 	c:RegisterEffect(e3)
 end
+s.fusion_effect=true
 function s.fscon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetCurrentPhase()==PHASE_MAIN1 or Duel.GetCurrentPhase()==PHASE_MAIN2
 end

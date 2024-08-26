@@ -3,6 +3,7 @@ local s,id,o=GetID()
 function s.initial_effect(c)
 	aux.AddXyzProcedure(c,nil,10,2,nil,nil,99)
 	c:EnableReviveLimit()
+	--
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,1))
 	e1:SetCategory(CATEGORY_NEGATE)
@@ -16,6 +17,7 @@ function s.initial_effect(c)
 	e1:SetTarget(s.distg)
 	e1:SetOperation(s.disop)
 	c:RegisterEffect(e1)
+	--
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_DESTROY)
@@ -26,6 +28,7 @@ function s.initial_effect(c)
 	e2:SetTarget(s.destg)
 	e2:SetOperation(s.desop)
 	c:RegisterEffect(e2)
+	--
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,2))
 	e3:SetCategory(CATEGORY_DESTROY)
@@ -52,21 +55,18 @@ function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=Duel.GetFieldGroup(tp,LOCATION_ONFIELD,LOCATION_ONFIELD)
-	if Duel.NegateActivation(ev)
-		and g:GetCount()>0 and c:CheckRemoveOverlayCard(tp,1,REASON_EFFECT)
-		and Duel.SelectYesNo(tp,aux.Stringid(id,3)) then
-		Duel.BreakEffect()
-		if c:RemoveOverlayCard(tp,1,1,REASON_EFFECT)~=0 then
-			if re:GetHandler():IsRelateToEffect(re) and re:IsHasType(EFFECT_TYPE_ACTIVATE) then
-				g=Duel.GetFieldGroup(tp,LOCATION_ONFIELD,LOCATION_ONFIELD):Select(tp,1,1,re:GetHandler())
-			else
-				g=Duel.GetFieldGroup(tp,LOCATION_ONFIELD,LOCATION_ONFIELD):Select(tp,1,1,nil)
-			end
-			if #g>0 then
-				Duel.BreakEffect()
-				Duel.HintSelection(g)
-				Duel.Destroy(g,REASON_EFFECT)
+	if Duel.NegateActivation(ev) then
+		if Duel.GetMatchingGroupCount(Card.IsOnField,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)>0
+			and c:CheckRemoveOverlayCard(tp,1,REASON_EFFECT)
+			and Duel.SelectYesNo(tp,aux.Stringid(id,3)) then
+			Duel.BreakEffect()
+			if c:RemoveOverlayCard(tp,1,1,REASON_EFFECT)~=0 then
+				local g=Duel.SelectMatchingCard(tp,Card.IsOnField,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil)
+				if #g>0 then
+					Duel.BreakEffect()
+					Duel.HintSelection(g)
+					Duel.Destroy(g,REASON_EFFECT)
+				end
 			end
 		end
 	end

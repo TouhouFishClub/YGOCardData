@@ -49,6 +49,7 @@ function s.initial_effect(c)
 	e4:SetOperation(s.tgop)
 	c:RegisterEffect(e4)
 end
+s.fusion_effect=true
 function s.cfilter(c,tp)
 	return c:IsPreviousControler(tp) and not c:IsPreviousLocation(LOCATION_SZONE)
 	and (c:IsPreviousLocation(LOCATION_MZONE) or c:GetOriginalType()&TYPE_MONSTER~=0)
@@ -56,7 +57,7 @@ function s.cfilter(c,tp)
 end
 function s.checkop(e,tp,eg,ep,ev,re,r,rp)
 	for p=0,1 do
-		if eg:IsExists(s.cfilter,1,c,p) then
+		if eg:IsExists(s.cfilter,1,nil,p) then
 			Duel.RegisterFlagEffect(p,id,RESET_PHASE+PHASE_END,0,1)
 		end
 	end
