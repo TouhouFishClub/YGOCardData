@@ -1,5 +1,6 @@
 --オルフェゴール・ガラテアi
 local s,id,o=GetID()
+---@param c Card
 function s.initial_effect(c)
 	--link summon
 	aux.AddCodeList(c,90351981)
@@ -23,7 +24,7 @@ function s.initial_effect(c)
 	--search
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,0))
-	e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+	e3:SetCategory(CATEGORY_TOHAND|CATEGORY_SEARCH)
 	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCountLimit(1,id)

@@ -1,5 +1,6 @@
 --魔轟神ガミュジン
 local s,id,o=GetID()
+---@param c Card
 function s.initial_effect(c)
 	--synchro summon
 	aux.AddSynchroProcedure(c,aux.FilterBoolFunction(Card.IsSetCard,0x35),aux.NonTuner(nil),1)
@@ -26,10 +27,10 @@ function s.initial_effect(c)
 	e2:SetTarget(s.tglimit)
 	e2:SetValue(aux.tgoval)
 	c:RegisterEffect(e2)
-	--search
+	--draw
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,2))
-	e3:SetCategory(CATEGORY_DRAW+CATEGORY_HANDES)
+	e3:SetCategory(CATEGORY_DRAW|CATEGORY_HANDES)
 	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e3:SetCode(EVENT_TO_GRAVE)
 	e3:SetProperty(EFFECT_FLAG_DELAY)

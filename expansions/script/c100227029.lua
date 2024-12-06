@@ -1,5 +1,6 @@
 --ジュラック・アステロ
 local s,id,o=GetID()
+---@param c Card
 function s.initial_effect(c)
 	aux.AddCodeList(c,17548456)
 	--synchro summon
@@ -18,7 +19,7 @@ function s.initial_effect(c)
 	--disable special summon
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
-	e2:SetCategory(CATEGORY_DISABLE_SUMMON+CATEGORY_DESTROY)
+	e2:SetCategory(CATEGORY_DISABLE_SUMMON|CATEGORY_DESTROY)
 	e2:SetType(EFFECT_TYPE_QUICK_O)
 	e2:SetCode(EVENT_SPSUMMON)
 	e2:SetRange(LOCATION_MZONE)
