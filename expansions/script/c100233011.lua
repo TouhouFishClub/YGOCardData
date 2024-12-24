@@ -29,7 +29,6 @@ function s.initial_effect(c)
 	e3:SetDescription(aux.Stringid(id,3))
 	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetRange(LOCATION_MZONE)
-	e3:SetCondition(s.datcon)
 	e3:SetCost(s.datcost)
 	e3:SetTarget(s.dattg)
 	e3:SetOperation(s.datop)
@@ -55,12 +54,25 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chk==0 then return c:IsType(TYPE_XYZ) and Duel.IsExistingTarget(s.filter,tp,0,LOCATION_ONFIELD,1,c) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_XMATERIAL)
 	local g=Duel.SelectTarget(tp,s.filter,tp,0,LOCATION_ONFIELD,1,2,c)
+	g:KeepAlive()
 	Duel.SetChainLimit(s.limit(g))
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+	e1:SetCode(RESET_CHAIN)
+	e1:SetCountLimit(1)
+	e1:SetLabelObject(g)
+	e1:SetOperation(s.retop)
+	e1:SetReset(RESET_CHAIN)
+	Duel.RegisterEffect(e1,tp)
 end
 function s.limit(g)
 	return  function (e,lp,tp)
 				return not g:IsContains(e:GetHandler())
 			end
+end
+function s.retop(e,tp,eg,ep,ev,re,r,rp)
+	e:GetLabelObject():DeleteGroup()
 end
 function s.lfilter(c,e)
 	return not c:IsImmuneToEffect(e)
@@ -77,9 +89,6 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 		end
 		Duel.Overlay(c,sg)
 	end
-end
-function s.datcon(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetCurrentPhase()==PHASE_MAIN1 and aux.bpcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.dattg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
