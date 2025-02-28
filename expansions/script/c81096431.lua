@@ -51,21 +51,44 @@ function s.Drake_shark_f(function_f,int_lv,card_c)
 			   return c:IsXyzLevel(card_c,int_lv) and (not function_f or function_f(c))
 	end
 end
-function s.sxfilter(c,tp,xc,eid)
+function s.sxfilter(c,tp,xc)
 	local te=c:IsHasEffect(id,tp)
-	if te and te:GetValue()==eid then
+	if te then
 		local etg=te:GetTarget()
-		return etg(te,xc)
+		return not etg or etg(te,xc)
+	end
+	return false
+end
+function s.sxvalue(c,tp,xc)
+	local te=c:IsHasEffect(id,tp)
+	if te then
+		local etg=te:GetTarget()
+		if not etg or etg(te,xc) then
+			return te:GetValue()
+		end
 	end
 end
 function s.Drake_shark_gf(int_ct,int_tp,xc)
 	return function (g)
 			   local ct=g:GetCount()
-			   if g:IsExists(s.sxfilter,1,nil,int_tp,xc,id) then
-				   ct=ct+1
+			   local eg=g:Filter(s.sxfilter,nil,int_tp,xc)
+			   if #eg>0 then
+					ct=ct+eg:GetClassCount(s.sxvalue,int_tp,xc)
 			   end
-			   if g:IsExists(s.sxfilter,1,nil,int_tp,xc,101208009) then
-				   ct=ct+1
+			   local tc=g:GetFirst()
+			   while tc do
+				   local te=tc:IsHasEffect(EFFECT_XYZ_LEVEL,int_tp)
+				   if te then
+					   local evf=te:GetValue()
+					   if evf then
+						   local ev=evf(te,tc,xc)
+						   local lmct=(ev>>12)&0xf
+						   if lmct>0 and lmct>g:GetCount() then
+							   return false
+						   end
+					   end
+				   end
+				   tc=g:GetNext()
 			   end
 			   return ct>=int_ct
 	end
@@ -91,31 +114,7 @@ function s.adjustop(e,tp,eg,ep,ev,re,r,rp)
 					function Auxiliary.XyzLevelFreeOperationAlter(f,gf,minc,maxc,alterf,alterdesc,alterop)
 						return  function(e,tp,eg,ep,ev,re,r,rp,c,og,min,max)
 									if og and not min then
-										if og:GetCount()<maxc and mg:GetCount()>=minc and maxc==minc+2 then
-											local et=maxc-og:GetCount()
-											local exg=og:Filter(Card.IsHasEffect,nil,id,tp)
-											local ext=exg:GetClassCount(s.eftfilter,tp)
-											if et==0 or 2-et==ext then
-												for ttc in aux.Next(exg) do
-													local tte=ttc:IsHasEffect(id,tp)
-													if tte then
-														Duel.Hint(HINT_CARD,0,ttc:GetCode())
-														tte:UseCountLimit(tp)
-													end
-												end
-											else
-												local st=2-et
-												Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,3))
-												local reg=exg:SelectSubGroup(tp,s.gcheck,false,st,st,tp)
-												for ttc in aux.Next(reg) do
-													local tte=ttc:IsHasEffect(id,tp)
-													if tte then
-														Duel.Hint(HINT_CARD,0,ttc:GetCode())
-														tte:UseCountLimit(tp)
-													end
-												end
-											end
-										end
+										Auxiliary.Drake_Solve(tp,og,maxc,minc)
 										local sg=Group.CreateGroup()
 										local tc=og:GetFirst()
 										while tc do
@@ -128,31 +127,7 @@ function s.adjustop(e,tp,eg,ep,ev,re,r,rp)
 										Duel.Overlay(c,og)
 									else
 										local mg=e:GetLabelObject()
-										if mg:GetCount()<maxc and mg:GetCount()>=minc and maxc==minc+2 then
-											local et=maxc-mg:GetCount()
-											local exg=mg:Filter(Card.IsHasEffect,nil,id,tp)
-											local ext=exg:GetClassCount(s.eftfilter,tp)
-											if et==0 or 2-et==ext then
-												for ttc in aux.Next(exg) do
-													local tte=ttc:IsHasEffect(id,tp)
-													if tte then
-														Duel.Hint(HINT_CARD,0,ttc:GetCode())
-														tte:UseCountLimit(tp)
-													end
-												end
-											else
-												local st=2-et
-												Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,3))
-												local reg=exg:SelectSubGroup(tp,s.gcheck,false,st,st,tp)
-												for ttc in aux.Next(reg) do
-													local tte=ttc:IsHasEffect(id,tp)
-													if tte then
-														Duel.Hint(HINT_CARD,0,ttc:GetCode())
-														tte:UseCountLimit(tp)
-													end
-												end
-											end
-										end
+										Auxiliary.Drake_Solve(tp,mg,maxc,minc)
 										if e:GetLabel()==1 then
 											local mg2=mg:GetFirst():GetOverlayGroup()
 											if mg2:GetCount()~=0 then
@@ -181,31 +156,7 @@ function s.adjustop(e,tp,eg,ep,ev,re,r,rp)
 					function Auxiliary.XyzLevelFreeOperation(f,gf,minct,maxct)
 						return  function(e,tp,eg,ep,ev,re,r,rp,c,og,min,max)
 									if og and not min then
-										if mg:GetCount()<maxct and mg:GetCount()>=minct and maxct==minct+2 then
-											local et=maxct-mg:GetCount()
-											local exg=mg:Filter(Card.IsHasEffect,nil,id,tp)
-											local ext=exg:GetClassCount(s.eftfilter,tp)
-											if et==0 or 2-et==ext then
-												for ttc in aux.Next(exg) do
-													local tte=ttc:IsHasEffect(id,tp)
-													if tte then
-														Duel.Hint(HINT_CARD,0,ttc:GetCode())
-														tte:UseCountLimit(tp)
-													end
-												end
-											else
-												local st=2-et
-												Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,3))
-												local reg=exg:SelectSubGroup(tp,s.gcheck,false,st,st,tp)
-												for ttc in aux.Next(reg) do
-													local tte=ttc:IsHasEffect(id,tp)
-													if tte then
-														Duel.Hint(HINT_CARD,0,ttc:GetCode())
-														tte:UseCountLimit(tp)
-													end
-												end
-											end
-										end
+										Auxiliary.Drake_Solve(tp,og,maxct,minct)
 										local sg=Group.CreateGroup()
 										local tc=og:GetFirst()
 										while tc do
@@ -218,31 +169,7 @@ function s.adjustop(e,tp,eg,ep,ev,re,r,rp)
 										Duel.Overlay(c,og)
 									else
 										local mg=e:GetLabelObject()
-										if mg:GetCount()<maxct and mg:GetCount()>=minct and maxct==minct+2 then
-											local et=maxct-mg:GetCount()
-											local exg=mg:Filter(Card.IsHasEffect,nil,id,tp)
-											local ext=exg:GetClassCount(s.eftfilter,tp)
-											if et==0 or 2-et==ext then
-												for ttc in aux.Next(exg) do
-													local tte=ttc:IsHasEffect(id,tp)
-													if tte then
-														Duel.Hint(HINT_CARD,0,ttc:GetCode())
-														tte:UseCountLimit(tp)
-													end
-												end
-											else
-												local st=2-et
-												Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,3))
-												local reg=exg:SelectSubGroup(tp,s.gcheck,false,st,st,tp)
-												for ttc in aux.Next(reg) do
-													local tte=ttc:IsHasEffect(id,tp)
-													if tte then
-														Duel.Hint(HINT_CARD,0,ttc:GetCode())
-														tte:UseCountLimit(tp)
-													end
-												end
-											end
-										end
+										Auxiliary.Drake_Solve(tp,mg,maxct,minct)
 										if e:GetLabel()==1 then
 											local mg2=mg:GetFirst():GetOverlayGroup()
 											if mg2:GetCount()~=0 then
@@ -326,5 +253,32 @@ function s.xyzop(e,tp,eg,ep,ev,re,r,rp)
 	if c:IsRelateToEffect(e) and tc:IsRelateToEffect(e) and not tc:IsImmuneToEffect(e) then
 		tc:CancelToGrave()
 		Duel.Overlay(c,Group.FromCards(tc))
+	end
+end
+function Auxiliary.Drake_Solve(tp,g,maxct,minct,chkg)
+	if g:GetCount()<maxct and g:GetCount()>=minct and maxct==minct+2 then
+		local et=maxct-g:GetCount()
+		local exg=g:Filter(Card.IsHasEffect,nil,81096431,tp)
+		local ext=exg:GetClassCount(s.eftfilter,tp)
+		if (et==0 or et==ext) and #exg>0 then
+			for ttc in aux.Next(exg) do
+				local tte=ttc:IsHasEffect(81096431,tp)
+				if tte then
+					Duel.Hint(HINT_CARD,0,ttc:GetCode())
+					tte:UseCountLimit(tp)
+				end
+			end
+		elseif #exg>0 then
+			local st=et
+			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RESOLVECARD)
+			local reg=exg:SelectSubGroup(tp,s.gcheck,false,st,st,tp)
+			for ttc in aux.Next(reg) do
+				local tte=ttc:IsHasEffect(81096431,tp)
+				if tte then
+					Duel.Hint(HINT_CARD,0,ttc:GetCode())
+					tte:UseCountLimit(tp)
+				end
+			end
+		end
 	end
 end
