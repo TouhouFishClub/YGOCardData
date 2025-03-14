@@ -63,7 +63,7 @@ function s.goal(g,tp,lv,syncard,tuc)
 	if Duel.GetLocationCountFromEx(tp,tp,g,syncard)<=0 then return false end
 	if tuc:IsHasEffect(EFFECT_HAND_SYNCHRO) and g:IsExists(Card.IsLocation,2,tuc,LOCATION_HAND) then return false end
 	local lg=g:__add(tuc)
-	return lg:GetSum(s.val,syncard)==lv
+	return lg:CheckWithSumEqual(s.val,lv,#lg,#lg,syncard)
 end
 function s.LSynCondition(e,c,tuner,mg,min,max)
 	if c==nil then return true end
@@ -151,8 +151,9 @@ end
 function s.tdcon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_SYNCHRO)
 end
-function s.tdtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsCanTurnSet,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
+function s.tdtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsCanTurnSet() end
+    if chk==0 then return Duel.IsExistingTarget(Card.IsCanTurnSet,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_POSCHANGE)
 	local g=Duel.SelectTarget(tp,Card.IsCanTurnSet,tp,LOCATION_MZONE,LOCATION_MZONE,1,2,nil)
 	Duel.SetOperationInfo(0,CATEGORY_POSITION,g,#g,0,0)
