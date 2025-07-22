@@ -4,13 +4,12 @@ function s.initial_effect(c)
 	c:SetUniqueOnField(1,0,id)
 	c:EnableReviveLimit()
 	aux.AddFusionProcFunFun(c,s.ffilter1,s.ffilter2,1,true)
-	aux.AddContactFusionProcedure(c,Card.IsAbleToGraveAsCost,LOCATION_ONFIELD,0,Duel.SendtoGrave,REASON_COST)
+	aux.AddContactFusionProcedure(c,Card.IsAbleToGraveAsCost,LOCATION_ONFIELD+LOCATION_HAND,0,Duel.SendtoGrave,REASON_COST)
 	--special summon condition
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetCode(EFFECT_SPSUMMON_CONDITION)
 	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	e1:SetValue(s.splimit)
 	c:RegisterEffect(e1)
 	--equip or draw
 	local e2=Effect.CreateEffect(c)
@@ -24,9 +23,6 @@ function s.initial_effect(c)
 	e2:SetTarget(s.tstg)
 	e2:SetOperation(s.tsop)
 	c:RegisterEffect(e2)
-end
-function s.splimit(e,se,sp,st)
-	return not e:GetHandler():IsLocation(LOCATION_EXTRA)
 end
 function s.eqilter(c)
 	return c:GetOriginalType()&TYPE_MONSTER~=0
