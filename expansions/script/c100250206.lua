@@ -81,6 +81,7 @@ function s.descon(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_CARD,0,id)
 	local g=e:GetLabelObject()
 	local tg=g:Filter(s.desfilter,nil,e:GetLabel())
 	Duel.Destroy(tg,REASON_EFFECT)
@@ -98,7 +99,7 @@ function s.eatg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.eaop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
-	if tc:IsRelateToChain() and tc:IsLocation(LOCATION_MZONE) and tc:IsFaceup() then
+	if tc:IsRelateToChain() and tc:IsLocation(LOCATION_MZONE) then
 		local op=Duel.SelectOption(tp,aux.Stringid(id,2),aux.Stringid(id,3))
 		if op==0 then
 			local e1=Effect.CreateEffect(e:GetHandler())

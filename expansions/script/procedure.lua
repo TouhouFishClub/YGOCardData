@@ -6,6 +6,7 @@ Auxiliary.FGoalCheckAdditional=nil
 Auxiliary.RCheckAdditional=nil
 Auxiliary.RGCheckAdditional=nil
 
+
 --Gemini Summon
 function Auxiliary.IsDualState(effect)
 	local c=effect:GetHandler()
@@ -1810,7 +1811,7 @@ end
 function Auxiliary.EnablePendulumAttribute(c,reg)
 	if not Auxiliary.PendulumChecklist then
 		Auxiliary.PendulumChecklist=0
-		local ge1=Effect.GlobalEffect()
+		local ge1=Effect.CreateEffect(c)
 		ge1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
 		ge1:SetCode(EVENT_PHASE_START+PHASE_DRAW)
 		ge1:SetOperation(Auxiliary.PendulumReset)
@@ -3010,7 +3011,7 @@ function FusionSpell.ChainMaterialSummonTargetFilter(c,fusfilter,e,tp,mg,additio
 	return res
 end
 
----@alias FUSION_SPELL_STAGE_X_CALLBACK_FUNCTION fun(e:Effect,tc:Card,tp:integer,stage:FUSION_SPELL_CALLBACK_STAGE,mg_fuison_spell:Group,mg_all:Group):boolean|nil
+---@alias FUSION_SPELL_STAGE_X_CALLBACK_FUNCTION fun(e:Effect,tc:Card,tp:integer,stage:FUSION_SPELL_CALLBACK_STAGE,mg_fusion_spell:Group,mg_all:Group):boolean|nil
 -- different stage for call back
 ---@alias FUSION_SPELL_CALLBACK_STAGE integer
 -- Right before the Fusion Monster is officially summoned
