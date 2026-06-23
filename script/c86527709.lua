@@ -1,4 +1,4 @@
---Insect Invitation
+--虫だけエリアー
 local s,id,o=GetID()
 function s.initial_effect(c)
 	--Activate
@@ -31,7 +31,6 @@ function s.initial_effect(c)
 	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
 	e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
 	e4:SetCode(EVENT_TO_GRAVE)
-	e4:SetCountLimit(1,id+o)
 	e4:SetCondition(s.regcon)
 	e4:SetOperation(s.regop)
 	c:RegisterEffect(e4)
@@ -79,12 +78,6 @@ function s.regop(e,tp,eg,ep,ev,re,r,rp)
 	e1:SetOperation(s.setop)
 	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
 	c:RegisterEffect(e1)
-	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_SINGLE)
-	e2:SetProperty(EFFECT_FLAG_CLIENT_HINT)
-	e2:SetDescription(227)
-	e2:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_END)
-	c:RegisterEffect(e2)
 end
 function s.settg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_SZONE)>0 end

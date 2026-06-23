@@ -1,7 +1,7 @@
 --フルメタルフォーゼ・アルカエスト
 local s,id,o=GetID()
 function s.initial_effect(c)
-	--fusion material
+	-- fusion material
 	c:EnableReviveLimit()
 	aux.AddFusionProcFun2(c,aux.FilterBoolFunction(Card.IsFusionSetCard,0xe1),aux.FilterBoolFunction(Card.IsFusionType,TYPE_NORMAL),true)
 	--spsummon condition
@@ -14,7 +14,6 @@ function s.initial_effect(c)
 	--equip
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
-	e2:SetCategory(CATEGORY_EQUIP)
 	e2:SetType(EFFECT_TYPE_QUICK_O)
 	e2:SetHintTiming(0,TIMINGS_CHECK_MONSTER+TIMING_END_PHASE)
 	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
@@ -37,25 +36,20 @@ function s.initial_effect(c)
 	e3:SetOperation(function() return FusionSpell.FUSION_OPERATION_INHERIT end)
 	c:RegisterEffect(e3)
 end
-
 function s.eqcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()~=tp
 end
-
 function s.eqfilter(c,tp)
 	return c:IsFaceup() and c:IsType(TYPE_EFFECT)
 		and (c:IsControler(tp) or c:IsAbleToChangeControler())
 end
-
 function s.eqtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and s.eqfilter(chkc,tp) and chkc~=e:GetHandler() end
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_SZONE)>0
 		and Duel.IsExistingTarget(s.eqfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,e:GetHandler(),tp) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_EQUIP)
 	local g=Duel.SelectTarget(tp,s.eqfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,e:GetHandler(),tp)
-	Duel.SetOperationInfo(0,CATEGORY_EQUIP,g,1,0,0)
 end
-
 function s.eqop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_SZONE)<=0 then return end
 	local c=e:GetHandler()
@@ -79,15 +73,12 @@ function s.eqop(e,tp,eg,ep,ev,re,r,rp)
 	e2:SetReset(RESET_EVENT+RESETS_STANDARD)
 	tc:RegisterEffect(e2)
 end
-
 function s.eqlimit(e,c)
 	return e:GetOwner()==c
 end
-
 function s.mttg(e,c)
 	return c:GetEquipTarget()==e:GetHandler() and c:GetOriginalType()&TYPE_MONSTER~=0
 end
-
 function s.mtval(e,c)
 	if not c then return false end
 	return c:IsSetCard(0xe1)

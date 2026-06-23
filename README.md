@@ -59,10 +59,8 @@ Xyz materials:
 
 ### Directories:
 * pics: .jpg card images(177*254).
-* pics\thumbnail: .jpg thumbnail images(44*64).
 * script: .lua script files.
 * textures: Other image files.
 * deck: .ydk deck files.
 * replay: .yrp replay files.
 * expansions: *.cdb will be loaded as extra databases.
-# YGOCardData

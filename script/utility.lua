@@ -1704,8 +1704,8 @@ function Auxiliary.MergedDelayEventCheck1_ToSingleCard(e,tp,eg,ep,ev,re,r,rp)
 	g:Merge(eg)
 	local code,event=e:GetLabel()
 	local c=e:GetOwner()
-	local mr,meg=Duel.CheckEvent(event,true)
-	if mr and meg:IsContains(c) and (c:IsFaceup() or c:IsPublic()) then
+	-- clear if the owner card is in the event group
+	if eg:IsContains(c) then
 		g:Clear()
 	end
 	if Duel.GetCurrentChain()==0 and #g>0 and not Duel.CheckEvent(EVENT_CHAIN_END) then
@@ -1746,22 +1746,22 @@ function Auxiliary.EnableBESRemove(c)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e1:SetCode(EVENT_DAMAGE_STEP_END)
 	e1:SetRange(LOCATION_MZONE)
-	e1:SetCondition(Auxiliary.RemoveCondtion)
-	e1:SetTarget(Auxiliary.RemoveTarget)
-	e1:SetOperation(Auxiliary.RemoveOperation)
+	e1:SetCondition(Auxiliary.BESRemoveCondition)
+	e1:SetTarget(Auxiliary.BESRemoveTarget)
+	e1:SetOperation(Auxiliary.BESRemoveOperation)
 	c:RegisterEffect(e1)
 end
-function Auxiliary.RemoveCondtion(e,tp,eg,ep,ev,re,r,rp)
+function Auxiliary.BESRemoveCondition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return c:IsRelateToBattle()
 end
-function Auxiliary.RemoveTarget(e,tp,eg,ep,ev,re,r,rp,chk)
+function Auxiliary.BESRemoveTarget(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	if not e:GetHandler():IsCanRemoveCounter(tp,0x1f,1,REASON_EFFECT) then
 		Duel.SetOperationInfo(0,CATEGORY_DESTROY,e:GetHandler(),1,0,0)
 	end
 end
-function Auxiliary.RemoveOperation(e,tp,eg,ep,ev,re,r,rp)
+function Auxiliary.BESRemoveOperation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) then
 		if c:IsCanRemoveCounter(tp,0x1f,1,REASON_EFFECT) then
@@ -1982,37 +1982,9 @@ function Auxiliary.MonsterEffectPropertyFilter(flag)
 		return e:IsHasProperty(flag) and not e:IsHasRange(LOCATION_PZONE)
 	end
 end
-
--- patch for Card.SetSPSummonOnce for hints
-function Auxiliary.SPSummonOnceHintCondition(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsGlobalFlag(GLOBALFLAG_SPSUMMON_ONCE)
-end
-function Auxiliary.SPSummonOnceHintTarget(e,c)
-	return c:IsType(TYPE_MONSTER) and not c:CheckSPSummonOnce(c:GetControler())
-end
-function Auxiliary.SPSummonOnceHintInit(c)
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE+EFFECT_FLAG_SET_AVAILABLE+EFFECT_FLAG_CLIENT_HINT)
-	e1:SetDescription(226)
-
-	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_GRANT)
-	e2:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE+EFFECT_FLAG_SET_AVAILABLE+EFFECT_FLAG_IGNORE_RANGE)
-	e2:SetCondition(Auxiliary.SPSummonOnceHintCondition)
-	local range=0xff-LOCATION_MZONE
-	e2:SetTargetRange(range,range)
-	e2:SetTarget(Auxiliary.SPSummonOnceHintTarget)
-	e2:SetLabelObject(e1)
-	Duel.RegisterEffect(e2,0)
-end
-
-Auxiliary.SPSummonOnceHintInited=false
-Auxiliary.original_SetSPSummonOnce=Card.SetSPSummonOnce
-function Card.SetSPSummonOnce(c,...)
-	if not Auxiliary.SPSummonOnceHintInited then
-		Auxiliary.SPSummonOnceHintInited=true
-		Auxiliary.SPSummonOnceHintInit(c)
-	end
-	return Auxiliary.original_SetSPSummonOnce(c,...)
+---The `nolimit` parameter for Special Summon effects of Phantasms cards
+---@param c Card
+---@return boolean
+function Auxiliary.PhantasmsSpSummonType(c)
+	return c:IsType(TYPE_SPSUMMON)
 end
